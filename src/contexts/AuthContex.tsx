@@ -36,13 +36,15 @@ type AuthProviderProps = {
 export const AuthContext = createContext({} as AuthContextData)
 
 export function signOut() {
+    console.log("chegou no LOGOUT");
     try {
-        destroyCookie(undefined, '@nextauth.token')
-        Router.push('/')
-    } catch {
-        console.log('erro ao deslogar')
+      destroyCookie(null, '@nextauth.token', { path: '/' })
+      Router.push('/');
+   
+    } catch (err) {
+      console.log("Error ao sair")
     }
-}
+  }
 
 export function AuthProvider({ children }: AuthProviderProps) {
     const [user, setUser] = useState<UserProps>()
@@ -85,7 +87,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
                 email
             })
 
-            api.defaults.headers['Authorization'] = `Bearer ${token}`
+            api.defaults.headers.common['Authorization'] = `Bearer ${token}`
 
             toast.success("Bem vindo!")
 

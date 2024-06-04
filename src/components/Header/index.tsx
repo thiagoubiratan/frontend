@@ -19,7 +19,7 @@ export function Header() {
                     </Link>
 
                     <Link href='product'>
-                        Cardapio
+                        Produto
                     </Link>
 
                     <button onClick={signOut}>
