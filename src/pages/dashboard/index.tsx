@@ -61,6 +61,25 @@ export default function Dashboard({ orders }: HomeProps) {
         setModalVisible(true);
     }
 
+    async function handleFinishItem(id: number) {
+        const apliClient = setupAPIClient();
+        await apliClient.put('/order/finish', {
+            order_id: id,
+        })
+
+        const response = await apliClient.get('/orders');
+
+        setOrderList(response.data);
+        setModalVisible(false);
+    }
+
+    async function handleRefreshOrders() {
+        const apliClient = setupAPIClient();
+        const response = await apliClient.get('./orders');
+
+        setOrderList(response.data);
+    }
+
     Modal.setAppElement('#__next');
 
     return (
@@ -73,11 +92,17 @@ export default function Dashboard({ orders }: HomeProps) {
                 <main className={styles.container}>
                     <div className={styles.containerHeader}>
                         <h1>Últimos pedidos</h1>
-                        <button>
+                        <button onClick={handleRefreshOrders}>
                             <FiRefreshCcw size={25} color="#3fffa3"></FiRefreshCcw>
                         </button>
                     </div>
                     <article className={styles.listOrders}>
+                        {orderList.length === 0 && (
+                            <span className={styles.emptyList}>
+                                Nehum pedido aberto foi encontrado...
+                            </span>
+                        )}
+
                         {orderList.map(item => (
                             <section key={item.id} className={styles.orderItem}>
                                 <button onClick={() => handlerOpenModalView(item.id)}>
@@ -95,7 +120,8 @@ export default function Dashboard({ orders }: HomeProps) {
                     <ModalOrder
                         isOpen={modalVisible}
                         onRequestClose={hadlerCloseModel}
-                        order={modalItem}>
+                        order={modalItem}
+                        handleFinishOrder={handleFinishItem}>
                     </ModalOrder>
                 )}
 
